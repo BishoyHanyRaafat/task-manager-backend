@@ -1,0 +1,127 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, darwin, windows]
+        goarch: [amd64, arm64]
+    name: Build ${{ matrix.goos }}/${{ matrix.goarch }}
+
+    steps:
+      # -------------------------------
+      # Checkout
+      # -------------------------------
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # -------------------------------
+      # Setup Go
+      # -------------------------------
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+
+      # -------------------------------
+      # Extract version info
+      # -------------------------------
+      - name: Extract version info
+        id: vars
+        run: |
+          TAG_NAME="${GITHUB_REF_NAME}"
+          COMMIT="$(git rev-parse --short HEAD)"
+          BUILD_TIME="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+          echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "commit=$COMMIT" >> $GITHUB_OUTPUT
+          echo "build_time=$BUILD_TIME" >> $GITHUB_OUTPUT
+
+          if [[ "$TAG_NAME" == *staging ]]; then
+            echo "prerelease=true" >> $GITHUB_OUTPUT
+          else
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+          fi
+
+      # -------------------------------
+      # Go tidy
+      # -------------------------------
+      - name: Install dependencies
+        run: go mod tidy
+
+      # -------------------------------
+      # Swagger CLI installation
+      # -------------------------------
+      - name: Install swagger CLI
+        run: go install github.com/swaggo/swag/cmd/swag@latest
+
+      # -------------------------------
+      # Set swagger version
+      # -------------------------------
+      - name: Set SWAGGER_VERSION
+        run: echo "SWAGGER_VERSION=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+
+      # -------------------------------
+      # Generate Swagger
+      # -------------------------------
+      - name: Generate Swagger
+        run: go generate
+
+      # -------------------------------
+      # Build binary
+      # -------------------------------
+      - name: Build binary
+        run: |
+          mkdir -p dist/${{ matrix.goos }}_${{ matrix.goarch }}
+          EXT=""
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            EXT=".exe"
+          fi
+          OUTPUT=dist/${{ matrix.goos }}_${{ matrix.goarch }}/task-manager${EXT}
+
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \
+            -o $OUTPUT \
+            -ldflags "\
+              -X main.appVersion=${{ steps.vars.outputs.tag }} \
+              -X main.appCommit=${{ steps.vars.outputs.commit }} \
+              -X main.buildTime=${{ steps.vars.outputs.build_time }}" \
+            main.go
+
+      # -------------------------------
+      # Copy migrations
+      # -------------------------------
+      - name: Copy migrations
+        run: |
+          cp env.example dist/.env
+          cp -r migrations dist/${{ matrix.goos }}_${{ matrix.goarch }}/
+
+      # -------------------------------
+      # Zip artifact
+      # -------------------------------
+      - name: Zip artifact
+        run: |
+          cd dist/${{ matrix.goos }}_${{ matrix.goarch }}
+          ZIP_NAME=../../task-manager-${{ matrix.goos }}-${{ matrix.goarch }}.zip
+          zip -r $ZIP_NAME *
+          cd ../..
+
+      # -------------------------------
+      # Upload artifact for release
+      # -------------------------------
+      - name: Upload release artifact
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.vars.outputs.tag }}
+          name: ${{ steps.vars.outputs.tag }}
+          prerelease: ${{ steps.vars.outputs.prerelease }}
+          files: |
+            task-manager-${{ matrix.goos }}-${{ matrix.goarch }}.zip

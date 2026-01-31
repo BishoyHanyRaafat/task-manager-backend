@@ -1,8 +1,11 @@
+CREATE TYPE user_type AS ENUM ('standard', 'admin');
+
 CREATE TABLE IF NOT EXISTS users (
-  id UUID PRIMARY KEY,
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   first_name TEXT NOT NULL,
   last_name  TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
+  user_type user_type NOT NULL DEFAULT 'standard',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -10,16 +13,11 @@ CREATE TABLE IF NOT EXISTS users (
 -- Needed for gen_random_uuid()
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-DO $$
-BEGIN
-  CREATE TYPE auth_provider AS ENUM ('google', 'github');
-EXCEPTION
-  WHEN duplicate_object THEN NULL;
-END $$;
+CREATE TYPE auth_provider AS ENUM ('google', 'github');
 
 -- Passwords table: stores the current password hash (1 row per user)
 CREATE TABLE IF NOT EXISTS passwords (
-  id UUID PRIMARY KEY,
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
   v TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),

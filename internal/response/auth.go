@@ -1,5 +1,7 @@
 package response
 
+import "task_manager/internal/repositories/models"
+
 // SignupRequest is used by POST /auth/signup
 type SignupRequest struct {
 	FirstName string `json:"firstname" validate:"required,min=2,max=100"`
@@ -22,8 +24,9 @@ type AuthTokenData struct {
 }
 
 type MeData struct {
-	UserID    string `json:"user_id"`
-	FirstName string `json:"firstname"`
-	LastName  string `json:"lastname"`
-	Email     string `json:"email"`
+	UserID    string          `json:"user_id"`
+	FirstName string          `json:"firstname"`
+	LastName  string          `json:"lastname"`
+	Email     string          `json:"email"`
+	UserType  models.UserType `json:"user_type"`
 }

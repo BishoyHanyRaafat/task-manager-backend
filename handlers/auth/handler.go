@@ -82,6 +82,7 @@ func (h *Handler) Signup(c *gin.Context) {
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
 		Email:     req.Email,
+		UserType:  models.StandardUser,
 		CreatedAt: now,
 		UpdatedAt: now,
 	}
@@ -111,7 +112,8 @@ func (h *Handler) Signup(c *gin.Context) {
 		Email:     u.Email,
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
-		Provider:  "local",
+		Provider:  models.LocalProvider,
+		UserType:  u.UserType,
 	}
 	c.Set(h.mw.IdentityKey, identity)
 

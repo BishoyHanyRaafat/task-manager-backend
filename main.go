@@ -37,6 +37,7 @@ type AppInfo struct {
 
 // @title Task Manager API
 // @version dev
+// @host localhost:8080
 // @description Task manager API
 // @BasePath /api/v1
 // @securityDefinitions.apikey BearerAuth
@@ -108,7 +109,7 @@ func main() {
 	authH.RegisterRoutes(authGroup)
 	authhandler.RegisterRoutes(authGroup)
 	oauthH.RegisterRoutes(authGroup)
-	mehandler.RegisterRoutes(authGroup, authMiddleware.MiddlewareFunc())
+	mehandler.RegisterRoutes(v1, authMiddleware.MiddlewareFunc())
 
 	r.NoRoute(func(c *gin.Context) {
 		c.JSON(404, response.NotFound(response.CodeNotFound, "page not found", "DEFAULT_PAGE_HANDLER", nil))

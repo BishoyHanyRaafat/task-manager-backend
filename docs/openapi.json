@@ -7,7 +7,7 @@
         "contact": {},
         "version": "dev"
     },
-    "host": "",
+    "host": "localhost:8080",
     "basePath": "/api/v1",
     "paths": {
         "/auth/github/link": {
@@ -33,7 +33,29 @@
                         "in": "query"
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "302": {
+                        "description": "Redirect to Google OAuth consent screen"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.EnvelopeAny"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ErrorData"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
             }
         },
         "/auth/github/login": {
@@ -54,7 +76,29 @@
                         "in": "query"
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "302": {
+                        "description": "Redirect to Google OAuth consent screen"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.EnvelopeAny"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ErrorData"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
             }
         },
         "/auth/google/link": {
@@ -80,7 +124,29 @@
                         "in": "query"
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "302": {
+                        "description": "Redirect to Google OAuth consent screen"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.EnvelopeAny"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ErrorData"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
             }
         },
         "/auth/google/login": {
@@ -101,7 +167,29 @@
                         "in": "query"
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "302": {
+                        "description": "Redirect to Google OAuth consent screen"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.EnvelopeAny"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ErrorData"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
             }
         },
         "/auth/login": {
@@ -482,6 +570,17 @@
         }
     },
     "definitions": {
+        "models.UserType": {
+            "type": "string",
+            "enum": [
+                "standard",
+                "admin"
+            ],
+            "x-enum-varnames": [
+                "StandardUser",
+                "AdminUser"
+            ]
+        },
         "response.AuthTokenData": {
             "type": "object",
             "properties": {
@@ -587,6 +686,9 @@
                 },
                 "user_id": {
                     "type": "string"
+                },
+                "user_type": {
+                    "$ref": "#/definitions/models.UserType"
                 }
             }
         },

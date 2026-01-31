@@ -93,6 +93,8 @@ func NewWithConfig(users repositories.UserRepository, mw *jwt.GinJWTMiddleware, 
 // @Produce json
 // @Param platform query string false "Platform for OAuth flow (mobile|web)"
 // @Router /auth/google/login [get]
+// @Success 302 "Redirect to Google OAuth consent screen"
+// @Failure 400 {object} response.EnvelopeAny{data=response.ErrorData}
 func (h *Handler) GoogleLogin(c *gin.Context) {
 	if h.googleCfg == nil {
 		response.BadRequest(response.CodeInvalidRequest, "Google OAuth not configured", nil).Send(c)
@@ -111,6 +113,8 @@ func (h *Handler) GoogleLogin(c *gin.Context) {
 // @Produce json
 // @Security BearerAuth
 // @Param platform query string false "Platform for OAuth flow (mobile|web)"
+// @Success 302 "Redirect to Google OAuth consent screen"
+// @Failure 400 {object} response.EnvelopeAny{data=response.ErrorData}
 // @Router /auth/google/link [get]
 func (h *Handler) GoogleLink(c *gin.Context) {
 	if h.googleCfg == nil {
@@ -170,7 +174,7 @@ func (h *Handler) GoogleCallback(c *gin.Context) {
 
 	email := strings.ToLower(strings.TrimSpace(gu.Email))
 	profile := providerProfile{
-		Provider:       "google",
+		Provider:       models.GoogleProvider,
 		ProviderUserID: strings.TrimSpace(gu.ID),
 		Email:          email,
 		DisplayName:    strings.TrimSpace(gu.Name),
@@ -185,6 +189,8 @@ func (h *Handler) GoogleCallback(c *gin.Context) {
 // @Tags auth
 // @Produce json
 // @Param platform query string false "Platform for OAuth flow (mobile|web)"
+// @Success 302 "Redirect to Google OAuth consent screen"
+// @Failure 400 {object} response.EnvelopeAny{data=response.ErrorData}
 // @Router /auth/github/login [get]
 func (h *Handler) GitHubLogin(c *gin.Context) {
 	if h.githubCfg == nil {
@@ -204,6 +210,8 @@ func (h *Handler) GitHubLogin(c *gin.Context) {
 // @Produce json
 // @Security BearerAuth
 // @Param platform query string false "Platform for OAuth flow (mobile|web)"
+// @Success 302 "Redirect to Google OAuth consent screen"
+// @Failure 400 {object} response.EnvelopeAny{data=response.ErrorData}
 // @Router /auth/github/link [get]
 func (h *Handler) GitHubLink(c *gin.Context) {
 	if h.githubCfg == nil {
@@ -272,7 +280,7 @@ func (h *Handler) GitHubCallback(c *gin.Context) {
 	}
 
 	profile := providerProfile{
-		Provider:       "github",
+		Provider:       models.GithubProvider,
 		ProviderUserID: strconvItoa(gh.ID),
 		Email:          email,
 		Username:       strings.TrimSpace(gh.Login),
@@ -329,6 +337,7 @@ func (h *Handler) handleLoginWithProvider(c *gin.Context, platform string, p pro
 			Email:     existingByProvider.Email,
 			FirstName: existingByProvider.FirstName,
 			LastName:  existingByProvider.LastName,
+			UserType:  existingByProvider.UserType,
 			Provider:  p.Provider,
 			Avatar:    p.AvatarURL,
 		}, platform)
@@ -368,6 +377,7 @@ func (h *Handler) handleLoginWithProvider(c *gin.Context, platform string, p pro
 		Email:     strings.TrimSpace(p.Email),
 		CreatedAt: now,
 		UpdatedAt: now,
+		UserType:  models.StandardUser,
 	}
 	if err := h.users.CreateUser(c.Request.Context(), u); err != nil {
 		response.Internal(response.CodeDatabaseError, "could not create user", err.Error(), nil).Send(c)
@@ -475,6 +485,7 @@ func (h *Handler) handleLinkProvider(c *gin.Context, platform string, userIDRaw 
 		LastName:  u.LastName,
 		Provider:  p.Provider,
 		Avatar:    p.AvatarURL,
+		UserType:  u.UserType,
 	}, platform)
 }
 

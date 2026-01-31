@@ -3,6 +3,7 @@ package me
 import (
 	"net/http"
 	"task_manager/internal/jwtauth"
+	"task_manager/internal/repositories/models"
 	"task_manager/internal/response"
 
 	jwt "github.com/appleboy/gin-jwt/v3"
@@ -29,10 +30,13 @@ func Me(c *gin.Context) {
 	email, _ := claims["email"].(string)
 	first, _ := claims["firstname"].(string)
 	last, _ := claims["lastname"].(string)
+	userTypeStr, _ := claims["user_type"].(string)
+	user_type := models.UserType(userTypeStr)
 	response.OK(c, http.StatusOK, response.MeData{
 		UserID:    id,
 		FirstName: first,
 		LastName:  last,
 		Email:     email,
+		UserType:  user_type,
 	})
 }

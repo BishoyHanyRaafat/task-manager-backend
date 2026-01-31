@@ -21,11 +21,12 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 func (r *UserRepository) CreateUser(ctx context.Context, u *models.User) error {
 	_, err := r.db.ExecContext(
 		ctx,
-		`INSERT INTO users (id, first_name, last_name, email) VALUES (?, ?, ?, ?)`,
+		`INSERT INTO users (id, first_name, last_name, email, user_type) VALUES (?, ?, ?, ?, ?)`,
 		u.ID.String(),
 		u.FirstName,
 		u.LastName,
 		u.Email,
+		u.UserType,
 	)
 	return err
 }
@@ -35,9 +36,9 @@ func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*mod
 	var id string
 	err := r.db.QueryRowContext(
 		ctx,
-		`SELECT id, first_name, last_name, email, created_at, updated_at FROM users WHERE email = ?`,
+		`SELECT id, first_name, last_name, email, created_at, updated_at, user_type FROM users WHERE email = ?`,
 		email,
-	).Scan(&id, &u.FirstName, &u.LastName, &u.Email, &u.CreatedAt, &u.UpdatedAt)
+	).Scan(&id, &u.FirstName, &u.LastName, &u.Email, &u.CreatedAt, &u.UpdatedAt, &u.UserType)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -57,9 +58,9 @@ func (r *UserRepository) GetUserByID(ctx context.Context, userID uuid.UUID) (*mo
 	var id string
 	err := r.db.QueryRowContext(
 		ctx,
-		`SELECT id, first_name, last_name, email, created_at, updated_at FROM users WHERE id = ?`,
+		`SELECT id, first_name, last_name, email, created_at, updated_at, user_type FROM users WHERE id = ?`,
 		userID.String(),
-	).Scan(&id, &u.FirstName, &u.LastName, &u.Email, &u.CreatedAt, &u.UpdatedAt)
+	).Scan(&id, &u.FirstName, &u.LastName, &u.Email, &u.CreatedAt, &u.UpdatedAt, &u.UserType)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -109,13 +110,13 @@ func (r *UserRepository) GetUserByAuthProvider(ctx context.Context, provider mod
 	var id string
 	err := r.db.QueryRowContext(
 		ctx,
-		`SELECT u.id, u.first_name, u.last_name, u.email, u.created_at, u.updated_at
+		`SELECT u.id, u.first_name, u.last_name, u.email, u.created_at, u.updated_at, u.user_type
 		 FROM auth_providers ap
 		 JOIN users u ON u.id = ap.user_id
 		 WHERE ap.provider = ? AND ap.provider_user_id = ?`,
 		provider,
 		providerUserID,
-	).Scan(&id, &u.FirstName, &u.LastName, &u.Email, &u.CreatedAt, &u.UpdatedAt)
+	).Scan(&id, &u.FirstName, &u.LastName, &u.Email, &u.CreatedAt, &u.UpdatedAt, &u.UserType)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil

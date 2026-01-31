@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
     first_name TEXT NOT NULL,
     last_name  TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
+    user_type TEXT NOT NULL CHECK (user_type IN ('standard', 'admin')),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

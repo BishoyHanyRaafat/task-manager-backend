@@ -27,6 +27,7 @@ type UserIdentity struct {
 	FirstName string          `json:"firstname,omitempty"`
 	LastName  string          `json:"lastname,omitempty"`
 	Avatar    string          `json:"avatar_url,omitempty"`
+	UserType  models.UserType `json:"user_type,omitempty"`
 }
 
 func New(users repositories.UserRepository, secret string) (*jwt.GinJWTMiddleware, error) {
@@ -53,6 +54,7 @@ func New(users repositories.UserRepository, secret string) (*jwt.GinJWTMiddlewar
 					"firstname": v.FirstName,
 					"lastname":  v.LastName,
 					"avatar":    v.Avatar,
+					"user_type": v.UserType,
 				}
 			}
 			return gojwt.MapClaims{}
@@ -62,17 +64,19 @@ func New(users repositories.UserRepository, secret string) (*jwt.GinJWTMiddlewar
 			claims := jwt.ExtractClaims(c)
 			id, _ := claims[IdentityKey].(string)
 			email, _ := claims["email"].(string)
-			provider, _ := claims["provider"].(models.Provider)
+			provider, _ := claims["provider"].(string)
 			first, _ := claims["firstname"].(string)
 			last, _ := claims["lastname"].(string)
 			avatar, _ := claims["avatar"].(string)
+			userType, _ := claims["user_type"].(models.UserType)
 			return &UserIdentity{
 				ID:        id,
 				Email:     email,
-				Provider:  provider,
+				Provider:  models.Provider(provider),
 				FirstName: first,
 				LastName:  last,
 				Avatar:    avatar,
+				UserType:  userType,
 			}
 		},
 
@@ -100,13 +104,14 @@ func New(users repositories.UserRepository, secret string) (*jwt.GinJWTMiddlewar
 				return nil, jwt.ErrFailedAuthentication
 			}
 
-			trace.Log(c, "login_local", "user_id="+u.ID.String()+" email="+u.Email)
+			trace.Log(c, "login_local", "user_id="+u.ID.String()+" email="+u.Email+" user_type="+string(u.UserType))
 			return &UserIdentity{
 				ID:        u.ID.String(),
 				Email:     u.Email,
 				FirstName: u.FirstName,
 				LastName:  u.LastName,
-				Provider:  "local",
+				Provider:  models.LocalProvider,
+				UserType:  u.UserType,
 			}, nil
 		},
 

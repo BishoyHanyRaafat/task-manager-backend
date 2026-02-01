@@ -2,7 +2,7 @@ package self
 
 import (
 	"task_manager/internal/config"
-	"task_manager/internal/response"
+	"task_manager/internal/dto"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,10 +17,10 @@ func RegisterRoutes(rg *gin.RouterGroup) {
 // @Description Returns the application version, commit hash, and build time.
 // @Produce json
 // @Tags self
-// @Success 200 {object} response.AppInfo
+// @Success 200 {object} dto.AppInfoResponse
 // @Router /self/info [get]
 func getInfo(c *gin.Context) {
-	c.JSON(200, response.AppInfo{
+	c.JSON(200, dto.AppInfoResponse{
 		Version:   config.AppVersion,
 		Commit:    config.AppCommit,
 		BuildTime: config.BuildTime,
@@ -35,5 +35,5 @@ func getInfo(c *gin.Context) {
 // @Success 200 {string} string "OK"
 // @Router /self/health [get]
 func Health(c *gin.Context) {
-	response.OK(c, 200, "OK")
+	dto.OK(c, 200, "OK")
 }

@@ -10,10 +10,10 @@ import (
 	"net/url"
 	"strings"
 	"task_manager/internal/config"
+	"task_manager/internal/dto"
 	"task_manager/internal/jwtauth"
 	"task_manager/internal/repositories"
 	"task_manager/internal/repositories/models"
-	"task_manager/internal/response"
 	"task_manager/internal/trace"
 	"time"
 
@@ -94,10 +94,10 @@ func NewWithConfig(users repositories.UserRepository, mw *jwt.GinJWTMiddleware, 
 // @Param platform query string false "Platform for OAuth flow (mobile|web)"
 // @Router /auth/google/login [get]
 // @Success 302 "Redirect to Google OAuth consent screen"
-// @Failure 400 {object} response.ErrorEnvelope
+// @Failure 400 {object} dto.ErrorEnvelope
 func (h *Handler) GoogleLogin(c *gin.Context) {
 	if h.googleCfg == nil {
-		response.BadRequest(response.CodeInvalidRequest, "Google OAuth not configured", nil).Send(c)
+		dto.BadRequest(dto.CodeInvalidRequest, "Google OAuth not configured", nil).Send(c)
 		return
 	}
 	platform := normalizePlatform(c.Query("platform"))
@@ -114,16 +114,16 @@ func (h *Handler) GoogleLogin(c *gin.Context) {
 // @Security BearerAuth
 // @Param platform query string false "Platform for OAuth flow (mobile|web)"
 // @Success 302 "Redirect to Google OAuth consent screen"
-// @Failure 400 {object} response.ErrorEnvelope
+// @Failure 400 {object} dto.ErrorEnvelope
 // @Router /auth/google/link [get]
 func (h *Handler) GoogleLink(c *gin.Context) {
 	if h.googleCfg == nil {
-		response.BadRequest(response.CodeInvalidRequest, "Google OAuth not configured", nil).Send(c)
+		dto.BadRequest(dto.CodeInvalidRequest, "Google OAuth not configured", nil).Send(c)
 		return
 	}
 	userID, err := currentUserID(c)
 	if err != nil {
-		response.Unauthorized(response.CodeUnauthorized, "unauthorized", nil).Send(c)
+		dto.Unauthorized(dto.CodeUnauthorized, "unauthorized", nil).Send(c)
 		return
 	}
 	platform := normalizePlatform(c.Query("platform"))
@@ -134,28 +134,28 @@ func (h *Handler) GoogleLink(c *gin.Context) {
 
 func (h *Handler) GoogleCallback(c *gin.Context) {
 	if h.googleCfg == nil {
-		response.BadRequest(response.CodeInvalidRequest, "Google OAuth not configured", nil).Send(c)
+		dto.BadRequest(dto.CodeInvalidRequest, "Google OAuth not configured", nil).Send(c)
 		return
 	}
 
 	state := c.Query("state")
 	stateData, ok := h.state.Consume(state)
 	if !ok {
-		response.BadRequest(response.CodeInvalidRequest, "Invalid state token", nil).Send(c)
+		dto.BadRequest(dto.CodeInvalidRequest, "Invalid state token", nil).Send(c)
 		return
 	}
 
 	code := c.Query("code")
 	tok, err := h.googleCfg.Exchange(context.Background(), code)
 	if err != nil {
-		response.Internal(response.CodeInternalError, "Failed to exchange token", err.Error(), nil).Send(c)
+		dto.Internal(dto.CodeInternalError, "Failed to exchange token", err.Error(), nil).Send(c)
 		return
 	}
 
 	client := h.googleCfg.Client(context.Background(), tok)
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {
-		response.Internal(response.CodeInternalError, "Failed to get user info", err.Error(), nil).Send(c)
+		dto.Internal(dto.CodeInternalError, "Failed to get user info", err.Error(), nil).Send(c)
 		return
 	}
 	defer resp.Body.Close()
@@ -168,7 +168,7 @@ func (h *Handler) GoogleCallback(c *gin.Context) {
 		Picture string `json:"picture"`
 	}
 	if err := json.Unmarshal(data, &gu); err != nil {
-		response.Internal(response.CodeInternalError, "Failed to parse user info", err.Error(), nil).Send(c)
+		dto.Internal(dto.CodeInternalError, "Failed to parse user info", err.Error(), nil).Send(c)
 		return
 	}
 
@@ -190,11 +190,11 @@ func (h *Handler) GoogleCallback(c *gin.Context) {
 // @Produce json
 // @Param platform query string false "Platform for OAuth flow (mobile|web)"
 // @Success 302 "Redirect to Google OAuth consent screen"
-// @Failure 400 {object} response.ErrorEnvelope
+// @Failure 400 {object} dto.ErrorEnvelope
 // @Router /auth/github/login [get]
 func (h *Handler) GitHubLogin(c *gin.Context) {
 	if h.githubCfg == nil {
-		response.BadRequest(response.CodeInvalidRequest, "GitHub OAuth not configured", nil).Send(c)
+		dto.BadRequest(dto.CodeInvalidRequest, "GitHub OAuth not configured", nil).Send(c)
 		return
 	}
 	platform := normalizePlatform(c.Query("platform"))
@@ -211,16 +211,16 @@ func (h *Handler) GitHubLogin(c *gin.Context) {
 // @Security BearerAuth
 // @Param platform query string false "Platform for OAuth flow (mobile|web)"
 // @Success 302 "Redirect to Google OAuth consent screen"
-// @Failure 400 {object} response.ErrorEnvelope
+// @Failure 400 {object} dto.ErrorEnvelope
 // @Router /auth/github/link [get]
 func (h *Handler) GitHubLink(c *gin.Context) {
 	if h.githubCfg == nil {
-		response.BadRequest(response.CodeInvalidRequest, "GitHub OAuth not configured", nil).Send(c)
+		dto.BadRequest(dto.CodeInvalidRequest, "GitHub OAuth not configured", nil).Send(c)
 		return
 	}
 	userID, err := currentUserID(c)
 	if err != nil {
-		response.Unauthorized(response.CodeUnauthorized, "unauthorized", nil).Send(c)
+		dto.Unauthorized(dto.CodeUnauthorized, "unauthorized", nil).Send(c)
 		return
 	}
 	platform := normalizePlatform(c.Query("platform"))
@@ -231,28 +231,28 @@ func (h *Handler) GitHubLink(c *gin.Context) {
 
 func (h *Handler) GitHubCallback(c *gin.Context) {
 	if h.githubCfg == nil {
-		response.BadRequest(response.CodeInvalidRequest, "GitHub OAuth not configured", nil).Send(c)
+		dto.BadRequest(dto.CodeInvalidRequest, "GitHub OAuth not configured", nil).Send(c)
 		return
 	}
 
 	state := c.Query("state")
 	stateData, ok := h.state.Consume(state)
 	if !ok {
-		response.BadRequest(response.CodeInvalidRequest, "Invalid state token", nil).Send(c)
+		dto.BadRequest(dto.CodeInvalidRequest, "Invalid state token", nil).Send(c)
 		return
 	}
 
 	code := c.Query("code")
 	tok, err := h.githubCfg.Exchange(context.Background(), code)
 	if err != nil {
-		response.Internal(response.CodeInternalError, "Failed to exchange token", err.Error(), nil).Send(c)
+		dto.Internal(dto.CodeInternalError, "Failed to exchange token", err.Error(), nil).Send(c)
 		return
 	}
 
 	client := h.githubCfg.Client(context.Background(), tok)
 	resp, err := client.Get("https://api.github.com/user")
 	if err != nil {
-		response.Internal(response.CodeInternalError, "Failed to get user info", err.Error(), nil).Send(c)
+		dto.Internal(dto.CodeInternalError, "Failed to get user info", err.Error(), nil).Send(c)
 		return
 	}
 	defer resp.Body.Close()
@@ -266,7 +266,7 @@ func (h *Handler) GitHubCallback(c *gin.Context) {
 		AvatarURL string `json:"avatar_url"`
 	}
 	if err := json.Unmarshal(data, &gh); err != nil {
-		response.Internal(response.CodeInternalError, "Failed to parse user info", err.Error(), nil).Send(c)
+		dto.Internal(dto.CodeInternalError, "Failed to parse user info", err.Error(), nil).Send(c)
 		return
 	}
 
@@ -275,7 +275,7 @@ func (h *Handler) GitHubCallback(c *gin.Context) {
 		email = strings.ToLower(strings.TrimSpace(getGitHubPrimaryEmail(client)))
 	}
 	if email == "" {
-		response.Internal(response.CodeInternalError, "Failed to get user email", "GitHub returned no email", nil).Send(c)
+		dto.Internal(dto.CodeInternalError, "Failed to get user email", "GitHub returned no email", nil).Send(c)
 		return
 	}
 
@@ -301,7 +301,7 @@ type providerProfile struct {
 
 func (h *Handler) handleProviderCallback(c *gin.Context, stateData StateData, p providerProfile) {
 	if p.Provider == "" || p.ProviderUserID == "" {
-		response.BadRequest(response.CodeInvalidRequest, "invalid provider response", nil).Send(c)
+		dto.BadRequest(dto.CodeInvalidRequest, "invalid provider response", nil).Send(c)
 		return
 	}
 
@@ -313,7 +313,7 @@ func (h *Handler) handleProviderCallback(c *gin.Context, stateData StateData, p 
 		h.handleLinkProvider(c, stateData.Platform, stateData.UserID, p)
 		return
 	default:
-		response.BadRequest(response.CodeInvalidRequest, "invalid state", nil).Send(c)
+		dto.BadRequest(dto.CodeInvalidRequest, "invalid state", nil).Send(c)
 		return
 	}
 }
@@ -322,7 +322,7 @@ func (h *Handler) handleLoginWithProvider(c *gin.Context, platform string, p pro
 	// 1) If provider is already linked, login.
 	existingByProvider, err := h.users.GetUserByAuthProvider(c.Request.Context(), p.Provider, p.ProviderUserID)
 	if err != nil {
-		response.Internal(response.CodeDatabaseError, "database error", err.Error(), nil).Send(c)
+		dto.Internal(dto.CodeDatabaseError, "database error", err.Error(), nil).Send(c)
 		return
 	}
 	if existingByProvider != nil {
@@ -348,14 +348,14 @@ func (h *Handler) handleLoginWithProvider(c *gin.Context, platform string, p pro
 	if strings.TrimSpace(p.Email) != "" {
 		existingByEmail, err := h.users.GetUserByEmail(c.Request.Context(), p.Email)
 		if err != nil {
-			response.Internal(response.CodeDatabaseError, "database error", err.Error(), nil).Send(c)
+			dto.Internal(dto.CodeDatabaseError, "database error", err.Error(), nil).Send(c)
 			return
 		}
 		if existingByEmail != nil {
 			trace.Log(c, "oauth_login_forbidden_not_linked",
 				"provider="+string(p.Provider)+" provider_user_id="+p.ProviderUserID+" email="+p.Email,
 			)
-			response.Fail(c, http.StatusForbidden, response.CodeForbidden,
+			dto.Fail(c, http.StatusForbidden, dto.CodeForbidden,
 				"provider not linked to this account; login with your existing method and link it in your profile",
 				"", nil,
 			)
@@ -365,7 +365,7 @@ func (h *Handler) handleLoginWithProvider(c *gin.Context, platform string, p pro
 
 	// 3) Create new user + provider linkage.
 	if strings.TrimSpace(p.Email) == "" {
-		response.Internal(response.CodeInternalError, "failed to get user email", "provider returned no email", nil).Send(c)
+		dto.Internal(dto.CodeInternalError, "failed to get user email", "provider returned no email", nil).Send(c)
 		return
 	}
 
@@ -380,7 +380,7 @@ func (h *Handler) handleLoginWithProvider(c *gin.Context, platform string, p pro
 		UserType:  models.StandardUser,
 	}
 	if err := h.users.CreateUser(c.Request.Context(), u); err != nil {
-		response.Internal(response.CodeDatabaseError, "could not create user", err.Error(), nil).Send(c)
+		dto.Internal(dto.CodeDatabaseError, "could not create user", err.Error(), nil).Send(c)
 		return
 	}
 	ap := &models.AuthProvider{
@@ -396,7 +396,7 @@ func (h *Handler) handleLoginWithProvider(c *gin.Context, platform string, p pro
 		UpdatedAt:      now,
 	}
 	if err := h.users.CreateAuthProvider(c.Request.Context(), ap); err != nil {
-		response.Internal(response.CodeDatabaseError, "could not link provider", err.Error(), nil).Send(c)
+		dto.Internal(dto.CodeDatabaseError, "could not link provider", err.Error(), nil).Send(c)
 		return
 	}
 	trace.Log(c, "oauth_signup",
@@ -419,39 +419,39 @@ func (h *Handler) handleLoginWithProvider(c *gin.Context, platform string, p pro
 func (h *Handler) handleLinkProvider(c *gin.Context, platform string, userIDRaw string, p providerProfile) {
 	userID, err := uuid.Parse(strings.TrimSpace(userIDRaw))
 	if err != nil {
-		response.BadRequest(response.CodeInvalidRequest, "invalid user id in state", nil).Send(c)
+		dto.BadRequest(dto.CodeInvalidRequest, "invalid user id in state", nil).Send(c)
 		return
 	}
 
 	u, err := h.users.GetUserByID(c.Request.Context(), userID)
 	if err != nil {
-		response.Internal(response.CodeDatabaseError, "database error", err.Error(), nil).Send(c)
+		dto.Internal(dto.CodeDatabaseError, "database error", err.Error(), nil).Send(c)
 		return
 	}
 	if u == nil {
-		response.BadRequest(response.CodeInvalidRequest, "user not found", nil).Send(c)
+		dto.BadRequest(dto.CodeInvalidRequest, "user not found", nil).Send(c)
 		return
 	}
 
 	// If provider_user_id already linked to another user -> conflict.
 	existingByProvider, err := h.users.GetUserByAuthProvider(c.Request.Context(), p.Provider, p.ProviderUserID)
 	if err != nil {
-		response.Internal(response.CodeDatabaseError, "database error", err.Error(), nil).Send(c)
+		dto.Internal(dto.CodeDatabaseError, "database error", err.Error(), nil).Send(c)
 		return
 	}
 	if existingByProvider != nil && existingByProvider.ID != userID {
-		response.Conflict(response.CodeConflict, "provider account already linked to another user", nil).Send(c)
+		dto.Conflict(dto.CodeConflict, "provider account already linked to another user", nil).Send(c)
 		return
 	}
 
 	// If user already has this provider linked, it must match the same provider_user_id.
 	existingLink, err := h.users.GetAuthProviderByUserAndProvider(c.Request.Context(), userID, p.Provider)
 	if err != nil {
-		response.Internal(response.CodeDatabaseError, "database error", err.Error(), nil).Send(c)
+		dto.Internal(dto.CodeDatabaseError, "database error", err.Error(), nil).Send(c)
 		return
 	}
 	if existingLink != nil && existingLink.ProviderUserID != p.ProviderUserID {
-		response.Conflict(response.CodeConflict, "this provider is already linked to a different provider account", nil).Send(c)
+		dto.Conflict(dto.CodeConflict, "this provider is already linked to a different provider account", nil).Send(c)
 		return
 	}
 	if existingLink == nil {
@@ -469,7 +469,7 @@ func (h *Handler) handleLinkProvider(c *gin.Context, platform string, userIDRaw 
 			UpdatedAt:      now,
 		}
 		if err := h.users.CreateAuthProvider(c.Request.Context(), ap); err != nil {
-			response.Internal(response.CodeDatabaseError, "could not link provider", err.Error(), nil).Send(c)
+			dto.Internal(dto.CodeDatabaseError, "could not link provider", err.Error(), nil).Send(c)
 			return
 		}
 		trace.Log(c, "oauth_link",
@@ -501,13 +501,13 @@ func currentUserID(c *gin.Context) (uuid.UUID, error) {
 
 func (h *Handler) issueToken(c *gin.Context, user *jwtauth.UserIdentity, platform string) {
 	if h.mw == nil {
-		response.Internal(response.CodeInternalError, "auth middleware not initialized", "nil middleware", nil).Send(c)
+		dto.Internal(dto.CodeInternalError, "auth middleware not initialized", "nil middleware", nil).Send(c)
 		return
 	}
 	c.Set(h.mw.IdentityKey, user)
 	token, err := h.mw.TokenGenerator(c.Request.Context(), user)
 	if err != nil {
-		response.Internal(response.CodeInternalError, "Failed to generate token", err.Error(), nil).Send(c)
+		dto.Internal(dto.CodeInternalError, "Failed to generate token", err.Error(), nil).Send(c)
 		return
 	}
 	h.mw.SetCookie(c, token.AccessToken)

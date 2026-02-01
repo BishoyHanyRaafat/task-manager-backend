@@ -2,7 +2,7 @@ package validation
 
 import (
 	"fmt"
-	"task_manager/internal/response"
+	"task_manager/internal/dto"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -47,5 +47,5 @@ func formatTag(field string, tag string, param string) string {
 }
 
 func RegisterValidations() {
-	response.RegisterErrorCodeValidation(Validate)
+	dto.RegisterErrorCodeValidation(Validate)
 }

@@ -4,9 +4,9 @@ import (
 	"errors"
 	"net/http"
 	"strings"
+	"task_manager/internal/dto"
 	"task_manager/internal/repositories"
 	"task_manager/internal/repositories/models"
-	"task_manager/internal/response"
 	"task_manager/internal/trace"
 	"task_manager/internal/validation"
 	"time"
@@ -81,7 +81,7 @@ func New(users repositories.UserRepository, secret string) (*jwt.GinJWTMiddlewar
 		},
 
 		Authenticator: func(c *gin.Context) (any, error) {
-			var req response.LoginRequest
+			var req dto.LoginRequest
 			if err := c.ShouldBindJSON(&req); err != nil {
 				return nil, jwt.ErrMissingLoginValues
 			}
@@ -121,22 +121,22 @@ func New(users repositories.UserRepository, secret string) (*jwt.GinJWTMiddlewar
 		},
 
 		Unauthorized: func(c *gin.Context, code int, message string) {
-			errCode := response.CodeUnauthorized
+			errCode := dto.CodeUnauthorized
 			if code == http.StatusForbidden {
-				errCode = response.CodeForbidden
+				errCode = dto.CodeForbidden
 			}
 			if strings.Contains(strings.ToLower(message), "token") {
 				if code == http.StatusUnauthorized {
-					errCode = response.CodeMissingToken
+					errCode = dto.CodeMissingToken
 				} else {
-					errCode = response.CodeInvalidToken
+					errCode = dto.CodeInvalidToken
 				}
 			}
-			response.Fail(c, code, errCode, message, "", nil)
+			dto.Fail(c, code, errCode, message, "", nil)
 		},
 
 		LoginResponse: func(c *gin.Context, token *core.Token) {
-			response.OK(c, http.StatusOK, gin.H{
+			dto.OK(c, http.StatusOK, gin.H{
 				"access_token":  token.AccessToken,
 				"token_type":    token.TokenType,
 				"refresh_token": token.RefreshToken,
@@ -152,7 +152,7 @@ func New(users repositories.UserRepository, secret string) (*jwt.GinJWTMiddlewar
 				email = ""
 			}
 
-			response.OK(c, http.StatusOK, response.LogoutResponse{
+			dto.OK(c, http.StatusOK, dto.LogoutResponse{
 				Message: "Successfully logged out",
 				User:    email,
 			})

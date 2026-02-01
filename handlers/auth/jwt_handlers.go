@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"task_manager/internal/response"
+	"task_manager/internal/dto"
 
 	jwt "github.com/appleboy/gin-jwt/v3"
 	"github.com/gin-gonic/gin"
@@ -26,14 +26,14 @@ func RegisterRoutes(rg *gin.RouterGroup) {
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param request body response.LoginRequest true "Login request"
-// @Success 200 {object} response.AuthTokenEnvelope
-// @Failure 400 {object} response.ErrorEnvelope
-// @Failure 401 {object} response.ErrorEnvelope
+// @Param request body dto.LoginRequest true "Login request"
+// @Success 200 {object} dto.AuthTokenEnvelope
+// @Failure 400 {object} dto.ErrorEnvelope
+// @Failure 401 {object} dto.ErrorEnvelope
 // @Router /auth/login [post]
 func Login(c *gin.Context) {
 	if mw == nil {
-		response.Internal(response.CodeInternalError, "auth middleware not initialized", "nil middleware", nil).Send(c)
+		dto.Internal(dto.CodeInternalError, "auth middleware not initialized", "nil middleware", nil).Send(c)
 		return
 	}
 	mw.LoginHandler(c)
@@ -44,12 +44,12 @@ func Login(c *gin.Context) {
 // @Description Refresh JWT access token using refresh token.
 // @Tags auth
 // @Produce json
-// @Success 200 {object} response.AuthTokenEnvelope
-// @Failure 401 {object} response.ErrorEnvelope
+// @Success 200 {object} dto.AuthTokenEnvelope
+// @Failure 401 {object} dto.ErrorEnvelope
 // @Router /auth/refresh [post]
 func Refresh(c *gin.Context) {
 	if mw == nil {
-		response.Internal(response.CodeInternalError, "auth middleware not initialized", "nil middleware", nil).Send(c)
+		dto.Internal(dto.CodeInternalError, "auth middleware not initialized", "nil middleware", nil).Send(c)
 		return
 	}
 	mw.RefreshHandler(c)
@@ -61,13 +61,13 @@ func Refresh(c *gin.Context) {
 // @Tags auth
 // @Security BearerAuth
 // @Produce json
-// @Success 200 {object} response.LogoutEnvelope
-// @Failure 401 {object} response.ErrorEnvelope
-// @Failure 403 {object} response.ErrorEnvelope
+// @Success 200 {object} dto.LogoutEnvelope
+// @Failure 401 {object} dto.ErrorEnvelope
+// @Failure 403 {object} dto.ErrorEnvelope
 // @Router /auth/logout [post]
 func Logout(c *gin.Context) {
 	if mw == nil {
-		response.Internal(response.CodeInternalError, "auth middleware not initialized", "nil middleware", nil).Send(c)
+		dto.Internal(dto.CodeInternalError, "auth middleware not initialized", "nil middleware", nil).Send(c)
 		return
 	}
 	mw.LogoutHandler(c)

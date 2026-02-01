@@ -2,9 +2,9 @@ package user
 
 import (
 	"net/http"
+	"task_manager/internal/dto"
 	"task_manager/internal/jwtauth"
 	"task_manager/internal/repositories/models"
-	"task_manager/internal/response"
 
 	jwt "github.com/appleboy/gin-jwt/v3"
 	"github.com/gin-gonic/gin"
@@ -20,9 +20,9 @@ func RegisterRoutes(rg *gin.RouterGroup, AuthMiddleware gin.HandlerFunc) {
 // @Tags user
 // @Produce json
 // @Security BearerAuth
-// @Success 200 {object} response.MeEnvelope
-// @Failure 401 {object} response.ErrorEnvelope
-// @Failure 403 {object} response.ErrorEnvelope
+// @Success 200 {object} dto.MeEnvelope
+// @Failure 401 {object} dto.ErrorEnvelope
+// @Failure 403 {object} dto.ErrorEnvelope
 // @Router /user/me [get]
 func Me(c *gin.Context) {
 	claims := jwt.ExtractClaims(c)
@@ -32,7 +32,7 @@ func Me(c *gin.Context) {
 	last, _ := claims["lastname"].(string)
 	userTypeStr, _ := claims["user_type"].(string)
 	user_type := models.UserType(userTypeStr)
-	response.OK(c, http.StatusOK, response.MeData{
+	dto.OK(c, http.StatusOK, dto.MeResponse{
 		UserID:    id,
 		FirstName: first,
 		LastName:  last,

@@ -5,10 +5,10 @@ import (
 	"task_manager/handlers/self"
 	"task_manager/internal/config"
 	"task_manager/internal/db"
+	"task_manager/internal/dto"
 	"task_manager/internal/jwtauth"
 	"task_manager/internal/logging"
 	"task_manager/internal/repositories"
-	"task_manager/internal/response"
 	"task_manager/internal/trace"
 	"task_manager/internal/validation"
 
@@ -99,7 +99,7 @@ func main() {
 	userhandler.RegisterRoutes(userGroup, authMiddleware.MiddlewareFunc())
 
 	r.NoRoute(func(c *gin.Context) {
-		c.JSON(404, response.NotFound(response.CodeNotFound, "page not found", "DEFAULT_PAGE_HANDLER", nil))
+		c.JSON(404, dto.NotFound(dto.CodeNotFound, "page not found", "DEFAULT_PAGE_HANDLER", nil))
 	})
 
 	// Swagger/OpenAPI (debug mode only)

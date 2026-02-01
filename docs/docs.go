@@ -45,7 +45,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorEnvelope"
+                            "$ref": "#/definitions/dto.ErrorEnvelope"
                         }
                     }
                 }
@@ -76,7 +76,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorEnvelope"
+                            "$ref": "#/definitions/dto.ErrorEnvelope"
                         }
                     }
                 }
@@ -112,7 +112,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorEnvelope"
+                            "$ref": "#/definitions/dto.ErrorEnvelope"
                         }
                     }
                 }
@@ -143,7 +143,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorEnvelope"
+                            "$ref": "#/definitions/dto.ErrorEnvelope"
                         }
                     }
                 }
@@ -169,7 +169,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/response.LoginRequest"
+                            "$ref": "#/definitions/dto.LoginRequest"
                         }
                     }
                 ],
@@ -177,19 +177,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.AuthTokenEnvelope"
+                            "$ref": "#/definitions/dto.AuthTokenEnvelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorEnvelope"
+                            "$ref": "#/definitions/dto.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorEnvelope"
+                            "$ref": "#/definitions/dto.ErrorEnvelope"
                         }
                     }
                 }
@@ -214,19 +214,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.LogoutEnvelope"
+                            "$ref": "#/definitions/dto.LogoutEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorEnvelope"
+                            "$ref": "#/definitions/dto.ErrorEnvelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorEnvelope"
+                            "$ref": "#/definitions/dto.ErrorEnvelope"
                         }
                     }
                 }
@@ -246,13 +246,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.AuthTokenEnvelope"
+                            "$ref": "#/definitions/dto.AuthTokenEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorEnvelope"
+                            "$ref": "#/definitions/dto.ErrorEnvelope"
                         }
                     }
                 }
@@ -278,7 +278,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/response.SignupRequest"
+                            "$ref": "#/definitions/dto.SignupRequest"
                         }
                     }
                 ],
@@ -286,25 +286,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.AuthTokenEnvelope"
+                            "$ref": "#/definitions/dto.AuthTokenEnvelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorEnvelope"
+                            "$ref": "#/definitions/dto.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorEnvelope"
+                            "$ref": "#/definitions/dto.ErrorEnvelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorEnvelope"
+                            "$ref": "#/definitions/dto.ErrorEnvelope"
                         }
                     }
                 }
@@ -344,7 +344,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.AppInfo"
+                            "$ref": "#/definitions/dto.AppInfoResponse"
                         }
                     }
                 }
@@ -369,19 +369,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.MeEnvelope"
+                            "$ref": "#/definitions/dto.MeEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorEnvelope"
+                            "$ref": "#/definitions/dto.ErrorEnvelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrorEnvelope"
+                            "$ref": "#/definitions/dto.ErrorEnvelope"
                         }
                     }
                 }
@@ -389,18 +389,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.UserType": {
-            "type": "string",
-            "enum": [
-                "standard",
-                "admin"
-            ],
-            "x-enum-varnames": [
-                "StandardUser",
-                "AdminUser"
-            ]
-        },
-        "response.AppInfo": {
+        "dto.AppInfoResponse": {
             "type": "object",
             "properties": {
                 "build_time": {
@@ -414,7 +403,24 @@ const docTemplate = `{
                 }
             }
         },
-        "response.AuthTokenData": {
+        "dto.AuthTokenEnvelope": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/dto.AuthTokenResponse"
+                },
+                "debug": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "trace_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.AuthTokenResponse": {
             "type": "object",
             "properties": {
                 "access_token": {
@@ -431,24 +437,7 @@ const docTemplate = `{
                 }
             }
         },
-        "response.AuthTokenEnvelope": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/response.AuthTokenData"
-                },
-                "debug": {
-                    "type": "string"
-                },
-                "success": {
-                    "type": "boolean"
-                },
-                "trace_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "response.ErrorCode": {
+        "dto.ErrorCode": {
             "type": "string",
             "enum": [
                 "VALIDATION_ERROR",
@@ -477,11 +466,11 @@ const docTemplate = `{
                 "CodeInvalidEmail"
             ]
         },
-        "response.ErrorData": {
+        "dto.ErrorData": {
             "type": "object",
             "properties": {
                 "code": {
-                    "$ref": "#/definitions/response.ErrorCode"
+                    "$ref": "#/definitions/dto.ErrorCode"
                 },
                 "details": {
                     "type": "object",
@@ -492,11 +481,11 @@ const docTemplate = `{
                 }
             }
         },
-        "response.ErrorEnvelope": {
+        "dto.ErrorEnvelope": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/response.ErrorData"
+                    "$ref": "#/definitions/dto.ErrorData"
                 },
                 "debug": {
                     "type": "string"
@@ -509,7 +498,7 @@ const docTemplate = `{
                 }
             }
         },
-        "response.LoginRequest": {
+        "dto.LoginRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -524,11 +513,11 @@ const docTemplate = `{
                 }
             }
         },
-        "response.LogoutEnvelope": {
+        "dto.LogoutEnvelope": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/response.LogoutResponse"
+                    "$ref": "#/definitions/dto.LogoutResponse"
                 },
                 "debug": {
                     "type": "string"
@@ -541,7 +530,7 @@ const docTemplate = `{
                 }
             }
         },
-        "response.LogoutResponse": {
+        "dto.LogoutResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -552,7 +541,24 @@ const docTemplate = `{
                 }
             }
         },
-        "response.MeData": {
+        "dto.MeEnvelope": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/dto.MeResponse"
+                },
+                "debug": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "trace_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.MeResponse": {
             "type": "object",
             "properties": {
                 "email": {
@@ -572,24 +578,7 @@ const docTemplate = `{
                 }
             }
         },
-        "response.MeEnvelope": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/response.MeData"
-                },
-                "debug": {
-                    "type": "string"
-                },
-                "success": {
-                    "type": "boolean"
-                },
-                "trace_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "response.SignupRequest": {
+        "dto.SignupRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -616,6 +605,17 @@ const docTemplate = `{
                     "minLength": 8
                 }
             }
+        },
+        "models.UserType": {
+            "type": "string",
+            "enum": [
+                "standard",
+                "admin"
+            ],
+            "x-enum-varnames": [
+                "StandardUser",
+                "AdminUser"
+            ]
         }
     },
     "securityDefinitions": {

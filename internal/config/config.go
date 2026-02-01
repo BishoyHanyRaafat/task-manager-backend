@@ -37,6 +37,8 @@ type Config struct {
 
 	OAuthMobileDeeplinkTemplate string
 	OAuthWebRedirectTemplate    string
+
+	FrontendURL string
 }
 
 func Load() Config {
@@ -57,5 +59,6 @@ func Load() Config {
 		GitHubClientSecret:          getEnv("GITHUB_CLIENT_SECRET", ""),
 		OAuthMobileDeeplinkTemplate: getEnv("OAUTH_MOBILE_DEEPLINK_TEMPLATE", ""),
 		OAuthWebRedirectTemplate:    getEnv("OAUTH_WEB_REDIRECT_TEMPLATE", ""),
+		FrontendURL:                 getEnv("FRONTEND_URL", "http://localhost:3000"),
 	}
 }

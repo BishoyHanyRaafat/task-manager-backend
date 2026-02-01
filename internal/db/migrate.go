@@ -52,4 +52,3 @@ func RunMigrations(driver string, sqlDB *sql.DB, migrationsDir string) error {
 	}
 	return nil
 }
-

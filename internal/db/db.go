@@ -45,4 +45,3 @@ func (c Config) DriverName() string {
 		return c.Driver
 	}
 }
-

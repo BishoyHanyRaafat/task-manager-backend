@@ -16,6 +16,7 @@ import (
 	oauthhandler "task_manager/handlers/oauth"
 	userhandler "task_manager/handlers/user"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
@@ -49,6 +50,13 @@ func main() {
 	defer func() { _ = loggingRes.Close() }()
 
 	r := gin.Default()
+
+	ginconfig := cors.DefaultConfig()
+	ginconfig.AllowOrigins = []string{cfg.FrontendURL}
+	ginconfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
+	ginconfig.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", trace.HeaderKey}
+
+	r.Use(cors.New(ginconfig))
 	r.Use(trace.Middleware())
 
 	sqlDB, err := db.Open(db.Config{Driver: cfg.DBDriver, DSN: cfg.DBDSN})

@@ -4,10 +4,10 @@ import (
 	"database/sql"
 	"path/filepath"
 	"runtime"
+	"task_manager/internal/db"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"task_manager/internal/db"
 )
 
 // NewSQLiteTestDB creates a temporary sqlite database, runs migrations, and returns the opened *sql.DB.
@@ -38,4 +38,3 @@ func repoRoot(t *testing.T) string {
 	// .../task_manager/internal/testutil/testdb.go -> go up 3 levels to .../task_manager
 	return filepath.Dir(filepath.Dir(filepath.Dir(file)))
 }
-

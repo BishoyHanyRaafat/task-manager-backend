@@ -28,7 +28,7 @@ const (
 )
 
 type ErrorData struct {
-	Code    ErrorCode      `json:"code"`
+	Code    ErrorCode      `json:"code" validate:"error_code"`
 	Message string         `json:"message"`
 	Details map[string]any `json:"details,omitempty"`
 }

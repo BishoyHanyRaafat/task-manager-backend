@@ -32,7 +32,7 @@ func formatTag(field string, tag string, param string) string {
 	case "required":
 		return fmt.Sprintf("%s is required", field)
 	case "email":
-		return fmt.Sprintf("You must enter a valid email address", field)
+		return "You must enter a valid email address"
 	case "min":
 		min := 0
 		fmt.Sscanf(param, "%d", &min)

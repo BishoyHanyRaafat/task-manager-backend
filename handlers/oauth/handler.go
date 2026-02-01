@@ -94,7 +94,7 @@ func NewWithConfig(users repositories.UserRepository, mw *jwt.GinJWTMiddleware, 
 // @Param platform query string false "Platform for OAuth flow (mobile|web)"
 // @Router /auth/google/login [get]
 // @Success 302 "Redirect to Google OAuth consent screen"
-// @Failure 400 {object} response.EnvelopeAny{data=response.ErrorData}
+// @Failure 400 {object} response.ErrorEnvelope
 func (h *Handler) GoogleLogin(c *gin.Context) {
 	if h.googleCfg == nil {
 		response.BadRequest(response.CodeInvalidRequest, "Google OAuth not configured", nil).Send(c)
@@ -114,7 +114,7 @@ func (h *Handler) GoogleLogin(c *gin.Context) {
 // @Security BearerAuth
 // @Param platform query string false "Platform for OAuth flow (mobile|web)"
 // @Success 302 "Redirect to Google OAuth consent screen"
-// @Failure 400 {object} response.EnvelopeAny{data=response.ErrorData}
+// @Failure 400 {object} response.ErrorEnvelope
 // @Router /auth/google/link [get]
 func (h *Handler) GoogleLink(c *gin.Context) {
 	if h.googleCfg == nil {
@@ -190,7 +190,7 @@ func (h *Handler) GoogleCallback(c *gin.Context) {
 // @Produce json
 // @Param platform query string false "Platform for OAuth flow (mobile|web)"
 // @Success 302 "Redirect to Google OAuth consent screen"
-// @Failure 400 {object} response.EnvelopeAny{data=response.ErrorData}
+// @Failure 400 {object} response.ErrorEnvelope
 // @Router /auth/github/login [get]
 func (h *Handler) GitHubLogin(c *gin.Context) {
 	if h.githubCfg == nil {
@@ -211,7 +211,7 @@ func (h *Handler) GitHubLogin(c *gin.Context) {
 // @Security BearerAuth
 // @Param platform query string false "Platform for OAuth flow (mobile|web)"
 // @Success 302 "Redirect to Google OAuth consent screen"
-// @Failure 400 {object} response.EnvelopeAny{data=response.ErrorData}
+// @Failure 400 {object} response.ErrorEnvelope
 // @Router /auth/github/link [get]
 func (h *Handler) GitHubLink(c *gin.Context) {
 	if h.githubCfg == nil {

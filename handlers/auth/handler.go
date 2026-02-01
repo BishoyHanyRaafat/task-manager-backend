@@ -37,10 +37,10 @@ func (h *Handler) RegisterRoutes(rg *gin.RouterGroup) {
 // @Accept json
 // @Produce json
 // @Param request body response.SignupRequest true "Signup request"
-// @Success 200 {object} response.EnvelopeAny{data=response.AuthTokenData}
-// @Failure 400 {object} response.EnvelopeAny{data=response.ErrorData}
-// @Failure 409 {object} response.EnvelopeAny{data=response.ErrorData}
-// @Failure 500 {object} response.EnvelopeAny{data=response.ErrorData}
+// @Success 200 {object} response.AuthTokenEnvelope
+// @Failure 400 {object} response.ErrorEnvelope
+// @Failure 409 {object} response.ErrorEnvelope
+// @Failure 500 {object} response.ErrorEnvelope
 // @Router /auth/signup [post]
 func (h *Handler) Signup(c *gin.Context) {
 	req := response.SignupRequest{}

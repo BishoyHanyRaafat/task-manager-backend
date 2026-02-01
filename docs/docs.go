@@ -45,19 +45,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.ErrorData"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -88,19 +76,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.ErrorData"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -136,19 +112,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.ErrorData"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -179,19 +143,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.ErrorData"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -225,55 +177,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.AuthTokenData"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.AuthTokenEnvelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.ErrorData"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.ErrorData"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -298,55 +214,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.LogoutResponse"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.LogoutEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.ErrorData"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.ErrorData"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -366,37 +246,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.AuthTokenData"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.AuthTokenEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.ErrorData"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -430,146 +286,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.AuthTokenData"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.AuthTokenEnvelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.ErrorData"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.ErrorData"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.ErrorData"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/me": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Returns the user_id and email from the JWT claims.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Get current user",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.MeData"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.ErrorData"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.EnvelopeAny"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.ErrorData"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -580,6 +315,9 @@ const docTemplate = `{
                 "description": "Returns the health status of the application.",
                 "produces": [
                     "text/plain"
+                ],
+                "tags": [
+                    "self"
                 ],
                 "summary": "Health check",
                 "responses": {
@@ -598,12 +336,52 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "self"
+                ],
                 "summary": "Get application info",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.AppInfo"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/me": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns the user_id and email from the JWT claims.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get current user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.MeEnvelope"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorEnvelope"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -653,10 +431,12 @@ const docTemplate = `{
                 }
             }
         },
-        "response.EnvelopeAny": {
+        "response.AuthTokenEnvelope": {
             "type": "object",
             "properties": {
-                "data": {},
+                "data": {
+                    "$ref": "#/definitions/response.AuthTokenData"
+                },
                 "debug": {
                     "type": "string"
                 },
@@ -712,6 +492,23 @@ const docTemplate = `{
                 }
             }
         },
+        "response.ErrorEnvelope": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/response.ErrorData"
+                },
+                "debug": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "trace_id": {
+                    "type": "string"
+                }
+            }
+        },
         "response.LoginRequest": {
             "type": "object",
             "required": [
@@ -723,6 +520,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.LogoutEnvelope": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/response.LogoutResponse"
+                },
+                "debug": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "trace_id": {
                     "type": "string"
                 }
             }
@@ -755,6 +569,23 @@ const docTemplate = `{
                 },
                 "user_type": {
                     "$ref": "#/definitions/models.UserType"
+                }
+            }
+        },
+        "response.MeEnvelope": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/response.MeData"
+                },
+                "debug": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "trace_id": {
+                    "type": "string"
                 }
             }
         },

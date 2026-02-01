@@ -27,9 +27,9 @@ func RegisterRoutes(rg *gin.RouterGroup) {
 // @Accept json
 // @Produce json
 // @Param request body response.LoginRequest true "Login request"
-// @Success 200 {object} response.EnvelopeAny{data=response.AuthTokenData}
-// @Failure 400 {object} response.EnvelopeAny{data=response.ErrorData}
-// @Failure 401 {object} response.EnvelopeAny{data=response.ErrorData}
+// @Success 200 {object} response.AuthTokenEnvelope
+// @Failure 400 {object} response.ErrorEnvelope
+// @Failure 401 {object} response.ErrorEnvelope
 // @Router /auth/login [post]
 func Login(c *gin.Context) {
 	if mw == nil {
@@ -44,8 +44,8 @@ func Login(c *gin.Context) {
 // @Description Refresh JWT access token using refresh token.
 // @Tags auth
 // @Produce json
-// @Success 200 {object} response.EnvelopeAny{data=response.AuthTokenData}
-// @Failure 401 {object} response.EnvelopeAny{data=response.ErrorData}
+// @Success 200 {object} response.AuthTokenEnvelope
+// @Failure 401 {object} response.ErrorEnvelope
 // @Router /auth/refresh [post]
 func Refresh(c *gin.Context) {
 	if mw == nil {
@@ -61,9 +61,9 @@ func Refresh(c *gin.Context) {
 // @Tags auth
 // @Security BearerAuth
 // @Produce json
-// @Success 200 {object} response.EnvelopeAny{data=response.LogoutResponse}
-// @Failure 401 {object} response.EnvelopeAny{data=response.ErrorData}
-// @Failure 403 {object} response.EnvelopeAny{data=response.ErrorData}
+// @Success 200 {object} response.LogoutEnvelope
+// @Failure 401 {object} response.ErrorEnvelope
+// @Failure 403 {object} response.ErrorEnvelope
 // @Router /auth/logout [post]
 func Logout(c *gin.Context) {
 	if mw == nil {

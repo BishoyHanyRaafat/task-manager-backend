@@ -16,7 +16,7 @@ func RegisterRoutes(rg *gin.RouterGroup) {
 // @Summary Get application info
 // @Description Returns the application version, commit hash, and build time.
 // @Produce json
-// @Tag self
+// @Tags self
 // @Success 200 {object} response.AppInfo
 // @Router /self/info [get]
 func getInfo(c *gin.Context) {
@@ -31,7 +31,7 @@ func getInfo(c *gin.Context) {
 // @Summary Health check
 // @Description Returns the health status of the application.
 // @Produce text/plain
-// @Tag self
+// @Tags self
 // @Success 200 {string} string "OK"
 // @Router /self/health [get]
 func Health(c *gin.Context) {

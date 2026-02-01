@@ -20,10 +20,10 @@ func RegisterRoutes(rg *gin.RouterGroup, AuthMiddleware gin.HandlerFunc) {
 // @Tags user
 // @Produce json
 // @Security BearerAuth
-// @Success 200 {object} response.EnvelopeAny{data=response.MeData}
-// @Failure 401 {object} response.EnvelopeAny{data=response.ErrorData}
-// @Failure 403 {object} response.EnvelopeAny{data=response.ErrorData}
-// @Router /me [get]
+// @Success 200 {object} response.MeEnvelope
+// @Failure 401 {object} response.ErrorEnvelope
+// @Failure 403 {object} response.ErrorEnvelope
+// @Router /user/me [get]
 func Me(c *gin.Context) {
 	claims := jwt.ExtractClaims(c)
 	id, _ := claims[jwtauth.IdentityKey].(string)

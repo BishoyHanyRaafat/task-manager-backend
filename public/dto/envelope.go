@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"task_manager/internal/trace"
+	"task_manager/public/trace"
 
 	"github.com/gin-gonic/gin"
 )

@@ -2,7 +2,7 @@ package main
 
 // Developer commands (quick reference)
 //
-// Generate envelope DTOs for Swagger/OpenAPI (from internal/dto/*Data structs):
+// Generate envelope DTOs for Swagger/OpenAPI (from public/dto/*Data structs):
 //go:generate go run ./cmd/swaggen -g main.go -o docs --parseDependency --parseInternal
 
 // Migrations (CLI examples; run manually):

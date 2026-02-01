@@ -1,8 +1,8 @@
 package self
 
 import (
-	"task_manager/internal/config"
-	"task_manager/internal/dto"
+	"task_manager/public/config"
+	"task_manager/public/dto"
 
 	"github.com/gin-gonic/gin"
 )

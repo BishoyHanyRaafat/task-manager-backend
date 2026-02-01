@@ -2,7 +2,7 @@ package validation
 
 import (
 	"fmt"
-	"task_manager/internal/dto"
+	"task_manager/public/dto"
 
 	"github.com/go-playground/validator/v10"
 )

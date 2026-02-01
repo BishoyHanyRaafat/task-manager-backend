@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"context"
-	"task_manager/internal/repositories/models"
+	"task_manager/public/repositories/models"
 
 	"github.com/google/uuid"
 )

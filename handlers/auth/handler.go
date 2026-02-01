@@ -3,12 +3,12 @@ package auth
 import (
 	"net/http"
 	"strings"
-	"task_manager/internal/dto"
-	"task_manager/internal/jwtauth"
-	"task_manager/internal/repositories"
-	"task_manager/internal/repositories/models"
-	"task_manager/internal/trace"
-	"task_manager/internal/validation"
+	"task_manager/public/dto"
+	"task_manager/public/jwtauth"
+	"task_manager/public/repositories"
+	"task_manager/public/repositories/models"
+	"task_manager/public/trace"
+	"task_manager/public/validation"
 	"time"
 
 	jwt "github.com/appleboy/gin-jwt/v3"

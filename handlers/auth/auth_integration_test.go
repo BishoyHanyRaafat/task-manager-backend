@@ -2,9 +2,9 @@ package auth_test
 
 import (
 	"net/http"
-	"task_manager/internal/dto"
-	"task_manager/internal/testutil"
-	"task_manager/internal/testutil/fakes"
+	"task_manager/public/dto"
+	"task_manager/public/testutil"
+	"task_manager/public/testutil/fakes"
 	"testing"
 
 	"github.com/stretchr/testify/require"

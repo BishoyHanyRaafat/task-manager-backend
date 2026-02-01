@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"task_manager/internal/dto"
+	"task_manager/public/dto"
 
 	jwt "github.com/appleboy/gin-jwt/v3"
 	"github.com/gin-gonic/gin"

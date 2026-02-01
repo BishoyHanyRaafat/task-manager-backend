@@ -2,9 +2,9 @@ package user
 
 import (
 	"net/http"
-	"task_manager/internal/dto"
-	"task_manager/internal/jwtauth"
-	"task_manager/internal/repositories/models"
+	"task_manager/public/dto"
+	"task_manager/public/jwtauth"
+	"task_manager/public/repositories/models"
 
 	jwt "github.com/appleboy/gin-jwt/v3"
 	"github.com/gin-gonic/gin"

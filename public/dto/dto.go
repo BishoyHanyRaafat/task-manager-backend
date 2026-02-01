@@ -1,6 +1,6 @@
 package dto
 
-import "task_manager/internal/repositories/models"
+import "task_manager/public/repositories/models"
 
 // Request DTOs
 type SignupRequest struct {

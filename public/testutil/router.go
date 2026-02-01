@@ -1,8 +1,8 @@
 package testutil
 
 import (
-	"task_manager/internal/jwtauth"
-	"task_manager/internal/repositories"
+	"task_manager/public/jwtauth"
+	"task_manager/public/repositories"
 	"testing"
 
 	authhandler "task_manager/handlers/auth"

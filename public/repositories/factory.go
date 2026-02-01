@@ -3,9 +3,9 @@ package repositories
 import (
 	"database/sql"
 	"fmt"
-	"task_manager/internal/repositories/sqlite"
+	"task_manager/public/repositories/sqlite"
 
-	postgres "task_manager/internal/repositories/postgres"
+	postgres "task_manager/public/repositories/postgres"
 )
 
 func NewUserRepository(driver string, db *sql.DB) (UserRepository, error) {

@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"path/filepath"
 	"runtime"
-	"task_manager/internal/db"
+	"task_manager/public/db"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -35,6 +35,6 @@ func repoRoot(t *testing.T) string {
 	t.Helper()
 	_, file, _, ok := runtime.Caller(0)
 	require.True(t, ok)
-	// .../task_manager/internal/testutil/testdb.go -> go up 3 levels to .../task_manager
+	// .../task_manager/public/testutil/testdb.go -> go up 3 levels to .../task_manager
 	return filepath.Dir(filepath.Dir(filepath.Dir(file)))
 }

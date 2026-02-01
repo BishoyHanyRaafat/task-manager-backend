@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"sync"
-	"task_manager/internal/repositories"
-	"task_manager/internal/repositories/models"
+	"task_manager/public/repositories"
+	"task_manager/public/repositories/models"
 
 	"github.com/google/uuid"
 )

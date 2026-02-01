@@ -1,4 +1,4 @@
-package me
+package user
 
 import (
 	"net/http"
@@ -17,7 +17,7 @@ func RegisterRoutes(rg *gin.RouterGroup, AuthMiddleware gin.HandlerFunc) {
 // Me godoc
 // @Summary Get current user
 // @Description Returns the user_id and email from the JWT claims.
-// @Tags auth
+// @Tags user
 // @Produce json
 // @Security BearerAuth
 // @Success 200 {object} response.EnvelopeAny{data=response.MeData}

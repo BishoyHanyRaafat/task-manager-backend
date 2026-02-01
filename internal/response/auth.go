@@ -30,3 +30,8 @@ type MeData struct {
 	Email     string          `json:"email"`
 	UserType  models.UserType `json:"user_type"`
 }
+
+type LogoutResponse struct {
+	Message string `json:"message"`
+	User    string `json:"user"`
+}

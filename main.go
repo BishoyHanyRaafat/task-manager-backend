@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"task_manager/handlers/self"
 	"task_manager/internal/config"
 	"task_manager/internal/db"
 	"task_manager/internal/jwtauth"
@@ -12,8 +13,8 @@ import (
 	"task_manager/internal/validation"
 
 	authhandler "task_manager/handlers/auth"
-	mehandler "task_manager/handlers/me"
 	oauthhandler "task_manager/handlers/oauth"
+	userhandler "task_manager/handlers/user"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -22,18 +23,6 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	_ "modernc.org/sqlite"
 )
-
-var (
-	appVersion = "dev"
-	appCommit  = "none"
-	buildTime  = "unknown"
-)
-
-type AppInfo struct {
-	Version   string `json:"version"`
-	Commit    string `json:"commit"`
-	BuildTime string `json:"build_time"`
-}
 
 // @title Task Manager API
 // @version dev
@@ -45,6 +34,10 @@ type AppInfo struct {
 // @name Authorization
 func main() {
 	fmt.Println("Starting app...")
+
+	fmt.Println("VERSION:", config.AppVersion)
+	fmt.Println("COMMIT: ", config.AppCommit)
+	fmt.Println("BUILT:  ", config.BuildTime)
 	_ = godotenv.Load(".env", "env.example")
 
 	cfg := config.Load()
@@ -88,19 +81,6 @@ func main() {
 	authhandler.SetMiddleware(authMiddleware)
 
 	v1 := r.Group("/api/v1")
-	// Info route to check the health/version
-	// @Summary Get application info
-	// @Produce json
-	// @Tag meta
-	// @Success 200 {object} AppInfo
-	// @Router /api/v1/info [get]
-	v1.GET("/info", func(c *gin.Context) {
-		c.JSON(200, AppInfo{
-			Version:   appVersion,
-			Commit:    appCommit,
-			BuildTime: buildTime,
-		})
-	})
 	authH := authhandler.NewHandler(usersRepo, authMiddleware)
 	oauthH := oauthhandler.NewWithConfig(usersRepo, authMiddleware, cfg)
 
@@ -109,7 +89,14 @@ func main() {
 	authH.RegisterRoutes(authGroup)
 	authhandler.RegisterRoutes(authGroup)
 	oauthH.RegisterRoutes(authGroup)
-	mehandler.RegisterRoutes(v1, authMiddleware.MiddlewareFunc())
+
+	// Self routes
+	selfGroup := v1.Group("/self")
+	self.RegisterRoutes(selfGroup)
+
+	// User routes
+	userGroup := v1.Group("/user")
+	userhandler.RegisterRoutes(userGroup, authMiddleware.MiddlewareFunc())
 
 	r.NoRoute(func(c *gin.Context) {
 		c.JSON(404, response.NotFound(response.CodeNotFound, "page not found", "DEFAULT_PAGE_HANDLER", nil))

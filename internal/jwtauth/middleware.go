@@ -146,9 +146,15 @@ func New(users repositories.UserRepository, secret string) (*jwt.GinJWTMiddlewar
 
 		LogoutResponse: func(c *gin.Context) {
 			claims := jwt.ExtractClaims(c)
-			response.OK(c, http.StatusOK, gin.H{
-				"message": "Successfully logged out",
-				"user":    claims["email"],
+
+			email, ok := claims["email"].(string)
+			if !ok {
+				email = ""
+			}
+
+			response.OK(c, http.StatusOK, response.LogoutResponse{
+				Message: "Successfully logged out",
+				User:    email,
 			})
 		},
 

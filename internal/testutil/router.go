@@ -1,15 +1,16 @@
 package testutil
 
 import (
+	"task_manager/internal/jwtauth"
+	"task_manager/internal/repositories"
 	"testing"
+
+	authhandler "task_manager/handlers/auth"
+	oauthhandler "task_manager/handlers/oauth"
+	mehandler "task_manager/handlers/user"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
-	authhandler "task_manager/handlers/auth"
-	mehandler "task_manager/handlers/me"
-	oauthhandler "task_manager/handlers/oauth"
-	"task_manager/internal/jwtauth"
-	"task_manager/internal/repositories"
 )
 
 func NewTestRouter(t *testing.T, users repositories.UserRepository, jwtSecret string) *gin.Engine {
@@ -44,4 +45,3 @@ func NewTestRouter(t *testing.T, users repositories.UserRepository, jwtSecret st
 
 	return r
 }
-

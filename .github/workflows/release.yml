@@ -91,9 +91,9 @@ jobs:
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build \
             -o $OUTPUT \
             -ldflags "\
-              -X main.appVersion=${{ steps.vars.outputs.tag }} \
-              -X main.appCommit=${{ steps.vars.outputs.commit }} \
-              -X main.buildTime=${{ steps.vars.outputs.build_time }}" \
+              -X task_manager/internal/config.AppVersion=${{ steps.vars.outputs.tag }} \
+              -X task_manager/internal/config.AppCommit=${{ steps.vars.outputs.commit }} \
+              -X task_manager/internal/config.BuildTime=${{ steps.vars.outputs.build_time }}" \
             main.go
 
       # -------------------------------

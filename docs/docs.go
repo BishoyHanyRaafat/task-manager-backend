@@ -305,7 +305,9 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        "data": {}
+                                        "data": {
+                                            "$ref": "#/definitions/response.LogoutResponse"
+                                        }
                                     }
                                 }
                             ]
@@ -512,7 +514,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "user"
                 ],
                 "summary": "Get current user",
                 "responses": {
@@ -572,6 +574,40 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/self/health": {
+            "get": {
+                "description": "Returns the health status of the application.",
+                "produces": [
+                    "text/plain"
+                ],
+                "summary": "Health check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/self/info": {
+            "get": {
+                "description": "Returns the application version, commit hash, and build time.",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get application info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.AppInfo"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -585,6 +621,20 @@ const docTemplate = `{
                 "StandardUser",
                 "AdminUser"
             ]
+        },
+        "response.AppInfo": {
+            "type": "object",
+            "properties": {
+                "build_time": {
+                    "type": "string"
+                },
+                "commit": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
         },
         "response.AuthTokenData": {
             "type": "object",
@@ -673,6 +723,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.LogoutResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "user": {
                     "type": "string"
                 }
             }

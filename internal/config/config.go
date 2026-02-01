@@ -13,6 +13,12 @@ func getEnv(key string, def string) string {
 	return v
 }
 
+var (
+	AppVersion = "dev"
+	AppCommit  = "none"
+	BuildTime  = "unknown"
+)
+
 type Config struct {
 	Port          string
 	PublicBaseURL string

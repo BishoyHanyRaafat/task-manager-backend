@@ -61,7 +61,7 @@ func Refresh(c *gin.Context) {
 // @Tags auth
 // @Security BearerAuth
 // @Produce json
-// @Success 200 {object} response.EnvelopeAny{data=any}
+// @Success 200 {object} response.EnvelopeAny{data=response.LogoutResponse}
 // @Failure 401 {object} response.EnvelopeAny{data=response.ErrorData}
 // @Failure 403 {object} response.EnvelopeAny{data=response.ErrorData}
 // @Router /auth/logout [post]

@@ -13,10 +13,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func NewTestRouter(t *testing.T, users repositories.UserRepository, jwtSecret string) *gin.Engine {
+func NewTestRouter(t *testing.T, uow repositories.UnitOfWork, jwtSecret string) *gin.Engine {
 	t.Helper()
 	gin.SetMode(gin.TestMode)
 
+	users := uow.Users()
 	authMW, err := jwtauth.New(users, jwtSecret)
 	require.NoError(t, err)
 	require.NoError(t, authMW.MiddlewareInit())
@@ -27,8 +28,8 @@ func NewTestRouter(t *testing.T, users repositories.UserRepository, jwtSecret st
 
 	v1 := r.Group("/api/v1")
 
-	authH := authhandler.NewHandler(users, authMW)
-	oauthH := oauthhandler.New(users, authMW)
+	authH := authhandler.NewHandler(uow, authMW)
+	oauthH := oauthhandler.New(uow, authMW)
 	authGroup := v1.Group("/auth")
 	authGroup.POST("/signup", authH.Signup)
 	authGroup.POST("/login", authhandler.Login)

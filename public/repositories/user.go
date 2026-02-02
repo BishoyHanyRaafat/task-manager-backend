@@ -22,3 +22,8 @@ type UserRepository interface {
 	ListAuthProvidersByUserID(ctx context.Context, userID uuid.UUID) ([]models.AuthProvider, error)
 	CreateAuthProvider(ctx context.Context, ap *models.AuthProvider) error
 }
+
+// type TeamRepository interface {
+// 	CreateTeam(ctx context.Context, team *models.Team) error
+// 	GetTeamByID(ctx context.Context, teamID uuid.UUID) (*models.Team, error)
+// }

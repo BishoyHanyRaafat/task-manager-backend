@@ -73,10 +73,11 @@ func main() {
 	}
 
 	// Repositories DB LOGIC
-	usersRepo, err := repositories.NewUserRepository(cfg.DBDriver, sqlDB)
+	uow, err := repositories.NewUnitOfWork(cfg.DBDriver, sqlDB)
 	if err != nil {
 		panic(err)
 	}
+	usersRepo := uow.Users()
 
 	// Auth Middleware config
 	authMiddleware, err := jwtauth.New(usersRepo, cfg.JWTSecret)
@@ -89,8 +90,8 @@ func main() {
 	authhandler.SetMiddleware(authMiddleware)
 
 	v1 := r.Group("/api/v1")
-	authH := authhandler.NewHandler(usersRepo, authMiddleware)
-	oauthH := oauthhandler.NewWithConfig(usersRepo, authMiddleware, cfg)
+	authH := authhandler.NewHandler(uow, authMiddleware)
+	oauthH := oauthhandler.NewWithConfig(uow, authMiddleware, cfg)
 
 	// Auth routes
 	authGroup := v1.Group("/auth")

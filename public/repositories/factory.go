@@ -1,14 +1,14 @@
 package repositories
 
 import (
-	"database/sql"
 	"fmt"
+	dbx "task_manager/public/db"
 	"task_manager/public/repositories/sqlite"
 
 	postgres "task_manager/public/repositories/postgres"
 )
 
-func NewUserRepository(driver string, db *sql.DB) (UserRepository, error) {
+func NewUserRepositoryWithDBTX(driver string, db dbx.DBTX) (UserRepository, error) {
 	switch driver {
 	case "sqlite":
 		return sqlite.NewUserRepository(db), nil

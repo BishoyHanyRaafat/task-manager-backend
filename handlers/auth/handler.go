@@ -18,12 +18,13 @@ import (
 )
 
 type Handler struct {
+	uow   repositories.UnitOfWork
 	users repositories.UserRepository
 	mw    *jwt.GinJWTMiddleware
 }
 
-func NewHandler(users repositories.UserRepository, mw *jwt.GinJWTMiddleware) *Handler {
-	return &Handler{users: users, mw: mw}
+func NewHandler(uow repositories.UnitOfWork, mw *jwt.GinJWTMiddleware) *Handler {
+	return &Handler{uow: uow, users: uow.Users(), mw: mw}
 }
 
 func (h *Handler) RegisterRoutes(rg *gin.RouterGroup) {
@@ -86,7 +87,16 @@ func (h *Handler) Signup(c *gin.Context) {
 		CreatedAt: now,
 		UpdatedAt: now,
 	}
-	if err := h.users.CreateUser(c.Request.Context(), u); err != nil {
+
+	tx, err := h.uow.Begin(c.Request.Context())
+	if err != nil {
+		dto.Internal(dto.CodeDatabaseError, "database error", err.Error(), nil).Send(c)
+		return
+	}
+	defer tx.Stop()
+
+	step := "create_user"
+	if err := tx.Users().CreateUser(c.Request.Context(), u); err != nil {
 		// if the DB enforces uniqueness, this also covers race conditions
 		if looksLikeUniqueViolation(err) {
 			dto.Conflict(dto.CodeConflict, "email already in use", nil).Send(c)
@@ -96,8 +106,19 @@ func (h *Handler) Signup(c *gin.Context) {
 		return
 	}
 
-	if err := h.users.UpsertPassword(c.Request.Context(), u.ID, string(hash)); err != nil {
+	step = "set_password"
+	if err := tx.Users().UpsertPassword(c.Request.Context(), u.ID, string(hash)); err != nil {
 		dto.Internal(dto.CodeDatabaseError, "could not set password", err.Error(), nil).Send(c)
+		return
+	}
+
+	if err := tx.Commit(); err != nil {
+		switch step {
+		case "set_password":
+			dto.Internal(dto.CodeDatabaseError, "could not set password", err.Error(), nil).Send(c)
+		default:
+			dto.Internal(dto.CodeDatabaseError, "could not create user", err.Error(), nil).Send(c)
+		}
 		return
 	}
 	trace.Log(c, "signup", "user_id="+u.ID.String()+" email="+u.Email)

@@ -27,6 +27,7 @@ import (
 )
 
 type Handler struct {
+	uow   repositories.UnitOfWork
 	users repositories.UserRepository
 	mw    *jwt.GinJWTMiddleware
 	state *StateStore
@@ -38,8 +39,8 @@ type Handler struct {
 	oauthWebRedirectTemplate    string
 }
 
-func New(users repositories.UserRepository, mw *jwt.GinJWTMiddleware) *Handler {
-	return NewWithConfig(users, mw, config.Load())
+func New(uow repositories.UnitOfWork, mw *jwt.GinJWTMiddleware) *Handler {
+	return NewWithConfig(uow, mw, config.Load())
 }
 
 func (h *Handler) RegisterRoutes(rg *gin.RouterGroup) {
@@ -51,9 +52,10 @@ func (h *Handler) RegisterRoutes(rg *gin.RouterGroup) {
 	rg.GET("/github/link", h.mw.MiddlewareFunc(), h.GitHubLink)
 }
 
-func NewWithConfig(users repositories.UserRepository, mw *jwt.GinJWTMiddleware, cfg config.Config) *Handler {
+func NewWithConfig(uow repositories.UnitOfWork, mw *jwt.GinJWTMiddleware, cfg config.Config) *Handler {
 	h := &Handler{
-		users:                       users,
+		uow:                         uow,
+		users:                       uow.Users(),
 		mw:                          mw,
 		state:                       NewStateStore(10 * time.Minute),
 		oauthMobileDeeplinkTemplate: cfg.OAuthMobileDeeplinkTemplate,
@@ -379,10 +381,6 @@ func (h *Handler) handleLoginWithProvider(c *gin.Context, platform string, p pro
 		UpdatedAt: now,
 		UserType:  models.StandardUser,
 	}
-	if err := h.users.CreateUser(c.Request.Context(), u); err != nil {
-		dto.Internal(dto.CodeDatabaseError, "could not create user", err.Error(), nil).Send(c)
-		return
-	}
 	ap := &models.AuthProvider{
 		ID:             uuid.New(),
 		UserID:         u.ID,
@@ -395,8 +393,32 @@ func (h *Handler) handleLoginWithProvider(c *gin.Context, platform string, p pro
 		CreatedAt:      now,
 		UpdatedAt:      now,
 	}
-	if err := h.users.CreateAuthProvider(c.Request.Context(), ap); err != nil {
+	step := ""
+
+	tx, err := h.uow.Begin(c.Request.Context())
+	if err != nil {
+		dto.Internal(dto.CodeDatabaseError, "database error", err.Error(), nil).Send(c)
+		return
+	}
+	defer tx.Stop()
+
+	step = "create_user"
+	if err := tx.Users().CreateUser(c.Request.Context(), u); err != nil {
+		dto.Internal(dto.CodeDatabaseError, "could not create user", err.Error(), nil).Send(c)
+		return
+	}
+	step = "create_provider"
+	if err := tx.Users().CreateAuthProvider(c.Request.Context(), ap); err != nil {
 		dto.Internal(dto.CodeDatabaseError, "could not link provider", err.Error(), nil).Send(c)
+		return
+	}
+	if err := tx.Commit(); err != nil {
+		switch step {
+		case "create_provider":
+			dto.Internal(dto.CodeDatabaseError, "could not link provider", err.Error(), nil).Send(c)
+		default:
+			dto.Internal(dto.CodeDatabaseError, "could not create user", err.Error(), nil).Send(c)
+		}
 		return
 	}
 	trace.Log(c, "oauth_signup",

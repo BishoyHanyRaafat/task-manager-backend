@@ -12,7 +12,8 @@ import (
 
 func TestSignupLoginMe_FakeRepo(t *testing.T) {
 	repo := fakes.NewUserRepo()
-	r := testutil.NewTestRouter(t, repo, "test-secret")
+	uow := fakes.NewUnitOfWork(repo)
+	r := testutil.NewTestRouter(t, uow, "test-secret")
 
 	// signup
 	signupResp := testutil.DoJSON(t, r, http.MethodPost, "/api/v1/auth/signup", dto.SignupRequest{
@@ -51,7 +52,8 @@ func TestSignupLoginMe_FakeRepo(t *testing.T) {
 
 func TestMe_Unauthorized(t *testing.T) {
 	repo := fakes.NewUserRepo()
-	r := testutil.NewTestRouter(t, repo, "test-secret")
+	uow := fakes.NewUnitOfWork(repo)
+	r := testutil.NewTestRouter(t, uow, "test-secret")
 
 	meResp := testutil.DoJSON(t, r, http.MethodGet, "/api/v1/me", nil, nil)
 	require.Equal(t, http.StatusUnauthorized, meResp.Code)

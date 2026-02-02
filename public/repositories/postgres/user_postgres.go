@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	dbx "task_manager/public/db"
 	"task_manager/public/repositories/models"
 	"time"
 
@@ -11,10 +12,10 @@ import (
 )
 
 type UserRepository struct {
-	db *sql.DB
+	db dbx.DBTX
 }
 
-func NewUserRepository(db *sql.DB) *UserRepository {
+func NewUserRepository(db dbx.DBTX) *UserRepository {
 	return &UserRepository{db: db}
 }
 

@@ -15,6 +15,10 @@ type LoginRequest struct {
 	Password string `json:"password" validate:"required"`
 }
 
+type TeamCreationRequest struct {
+	TeamName string `json:"team_name" validate:"required,min=2,max=100"`
+}
+
 // Response DTOs
 type AuthTokenResponse struct {
 	AccessToken  string `json:"access_token"`

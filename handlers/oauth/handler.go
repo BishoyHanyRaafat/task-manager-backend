@@ -393,8 +393,6 @@ func (h *Handler) handleLoginWithProvider(c *gin.Context, platform string, p pro
 		CreatedAt:      now,
 		UpdatedAt:      now,
 	}
-	step := ""
-
 	tx, err := h.uow.Begin(c.Request.Context())
 	if err != nil {
 		dto.Internal(dto.CodeDatabaseError, "database error", err.Error(), nil).Send(c)
@@ -402,23 +400,16 @@ func (h *Handler) handleLoginWithProvider(c *gin.Context, platform string, p pro
 	}
 	defer tx.Stop()
 
-	step = "create_user"
 	if err := tx.Users().CreateUser(c.Request.Context(), u); err != nil {
 		dto.Internal(dto.CodeDatabaseError, "could not create user", err.Error(), nil).Send(c)
 		return
 	}
-	step = "create_provider"
 	if err := tx.Users().CreateAuthProvider(c.Request.Context(), ap); err != nil {
 		dto.Internal(dto.CodeDatabaseError, "could not link provider", err.Error(), nil).Send(c)
 		return
 	}
 	if err := tx.Commit(); err != nil {
-		switch step {
-		case "create_provider":
-			dto.Internal(dto.CodeDatabaseError, "could not link provider", err.Error(), nil).Send(c)
-		default:
-			dto.Internal(dto.CodeDatabaseError, "could not create user", err.Error(), nil).Send(c)
-		}
+		dto.Internal(dto.CodeDatabaseError, "could not complete signup", err.Error(), nil).Send(c)
 		return
 	}
 	trace.Log(c, "oauth_signup",

@@ -10,6 +10,7 @@ var _ repositories.UnitOfWork = (*UnitOfWork)(nil)
 
 type transaction struct {
 	users     repositories.UserRepository
+	teams     repositories.TeamRepository
 	committed bool
 }
 
@@ -19,18 +20,23 @@ var _ repositories.Transaction = (*transaction)(nil)
 // against the same in-memory repositories without actually opening a DB transaction.
 type UnitOfWork struct {
 	users repositories.UserRepository
+	teams repositories.TeamRepository
 }
 
-func NewUnitOfWork(users repositories.UserRepository) *UnitOfWork {
-	return &UnitOfWork{users: users}
+func NewUnitOfWork(users repositories.UserRepository, teams repositories.TeamRepository) *UnitOfWork {
+	return &UnitOfWork{users: users, teams: teams}
 }
 
 func (u *UnitOfWork) Users() repositories.UserRepository {
 	return u.users
 }
 
+func (u *UnitOfWork) Teams() repositories.TeamRepository {
+	return u.teams
+}
+
 func (u *UnitOfWork) Begin(_ context.Context) (repositories.Transaction, error) {
-	return &transaction{users: u.users}, nil
+	return &transaction{users: u.users, teams: u.teams}, nil
 }
 
 func (u *UnitOfWork) WithTransaction(ctx context.Context, fn func(ctx context.Context, r repositories.Repos) error) error {
@@ -46,11 +52,15 @@ func (u *UnitOfWork) WithTransaction(ctx context.Context, fn func(ctx context.Co
 }
 
 func (t *transaction) Repos() repositories.Repos {
-	return repositories.Repos{Users: t.users}
+	return repositories.Repos{Users: t.users, Teams: t.teams}
 }
 
 func (t *transaction) Users() repositories.UserRepository {
 	return t.users
+}
+
+func (t *transaction) Teams() repositories.TeamRepository {
+	return t.teams
 }
 
 func (t *transaction) Commit() error {

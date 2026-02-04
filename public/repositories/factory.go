@@ -18,3 +18,14 @@ func NewUserRepositoryWithDBTX(driver string, db dbx.DBTX) (UserRepository, erro
 		return nil, fmt.Errorf("unsupported db driver: %s", driver)
 	}
 }
+
+func NewTeamRepositoryWithDBTX(driver string, db dbx.DBTX) (TeamRepository, error) {
+	switch driver {
+	case "sqlite":
+		return sqlite.NewTeamRepository(db), nil
+	case "postgres":
+		return postgres.NewTeamRepository(db), nil
+	default:
+		return nil, fmt.Errorf("unsupported db driver: %s", driver)
+	}
+}

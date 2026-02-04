@@ -28,4 +28,16 @@ CREATE TABLE IF NOT EXISTS tasks
     user_id_task UUID,             -- NOT NULL If individual
     FOREIGN KEY (user_id_task) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (team_id) REFERENCES teams (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS teams_invitations
+(
+    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    team_id      UUID NOT NULL,
+    to_user_id   UUID NOT NULL,
+    from_user_id UUID NOT NULL,
+    accepted     BOOLEAN, -- Can be nullable means it is still not accepted nor denied
+    FOREIGN KEY (team_id) REFERENCES teams (id) ON DELETE CASCADE,
+    FOREIGN KEY (to_user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (from_user_id) REFERENCES users (id) ON DELETE CASCADE
 )

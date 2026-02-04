@@ -53,6 +53,13 @@ func Fail(c *gin.Context, status int, code ErrorCode, message string, debug stri
 	} else {
 		log.Printf("trace_id=%s event=error code=%s message=%q", tid, code, message)
 	}
+
+	// Dev-only field: never include debug details in release mode.
+	clientDebug := ""
+	if gin.Mode() != gin.ReleaseMode {
+		clientDebug = debug
+	}
+
 	payload := ErrorData{
 		Code:    code,
 		Message: message,
@@ -62,7 +69,7 @@ func Fail(c *gin.Context, status int, code ErrorCode, message string, debug stri
 		StatusCode: status,
 		Success:    false,
 		TraceID:    tid,
-		Debug:      debug,
+		Debug:      clientDebug,
 		Data:       payload,
 	})
 }

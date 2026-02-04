@@ -12,7 +12,7 @@ import (
 
 func TestSignupLoginMe_FakeRepo(t *testing.T) {
 	repo := fakes.NewUserRepo()
-	uow := fakes.NewUnitOfWork(repo)
+	uow := fakes.NewUnitOfWork(repo, nil)
 	r := testutil.NewTestRouter(t, uow, "test-secret")
 
 	// signup
@@ -52,7 +52,7 @@ func TestSignupLoginMe_FakeRepo(t *testing.T) {
 
 func TestMe_Unauthorized(t *testing.T) {
 	repo := fakes.NewUserRepo()
-	uow := fakes.NewUnitOfWork(repo)
+	uow := fakes.NewUnitOfWork(repo, nil)
 	r := testutil.NewTestRouter(t, uow, "test-secret")
 
 	meResp := testutil.DoJSON(t, r, http.MethodGet, "/api/v1/me", nil, nil)

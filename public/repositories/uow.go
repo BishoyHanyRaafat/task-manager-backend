@@ -4,12 +4,15 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	dbx "task_manager/public/db"
 )
 
 // Repos groups all repositories that should share the same DB handle (DB or Tx).
 // Over time you can add more repos here (Teams, Tasks, etc).
 type Repos struct {
 	Users UserRepository
+	Teams TeamRepository
 }
 
 // Transaction is an explicit, manually-managed transaction scope.
@@ -28,6 +31,7 @@ type Repos struct {
 type Transaction interface {
 	Repos() Repos
 	Users() UserRepository
+	Teams() TeamRepository
 	Commit() error
 	Rollback() error
 	Stop() error
@@ -50,6 +54,7 @@ type Transaction interface {
 //	})
 type UnitOfWork interface {
 	Users() UserRepository
+	Teams() TeamRepository
 	Begin(ctx context.Context) (Transaction, error)
 	WithTransaction(ctx context.Context, fn func(ctx context.Context, r Repos) error) error
 }
@@ -78,8 +83,14 @@ func NewUnitOfWork(driver string, db *sql.DB) (UnitOfWork, error) {
 
 func (u *unitOfWork) Users() UserRepository {
 	// Driver is validated in NewUnitOfWork; ignore error here.
-	repo, _ := NewUserRepositoryWithDBTX(u.driver, u.db)
-	return repo
+	repos, _ := u.buildRepos(u.db)
+	return repos.Users
+}
+
+func (u *unitOfWork) Teams() TeamRepository {
+	// Driver is validated in NewUnitOfWork; ignore error here.
+	repos, _ := u.buildRepos(u.db)
+	return repos.Teams
 }
 
 func (u *unitOfWork) Begin(ctx context.Context) (Transaction, error) {
@@ -88,7 +99,7 @@ func (u *unitOfWork) Begin(ctx context.Context) (Transaction, error) {
 		return nil, err
 	}
 
-	repos, err := u.reposWith(tx)
+	repos, err := u.buildRepos(tx)
 	if err != nil {
 		_ = tx.Rollback()
 		return nil, err
@@ -97,23 +108,18 @@ func (u *unitOfWork) Begin(ctx context.Context) (Transaction, error) {
 	return &transaction{tx: tx, repos: repos}, nil
 }
 
-func (u *unitOfWork) reposWith(txOrDB any) (Repos, error) {
-	switch v := txOrDB.(type) {
-	case *sql.Tx:
-		users, err := NewUserRepositoryWithDBTX(u.driver, v)
-		if err != nil {
-			return Repos{}, err
-		}
-		return Repos{Users: users}, nil
-	case *sql.DB:
-		users, err := NewUserRepositoryWithDBTX(u.driver, v)
-		if err != nil {
-			return Repos{}, err
-		}
-		return Repos{Users: users}, nil
-	default:
-		return Repos{}, fmt.Errorf("unsupported db handle type: %T", txOrDB)
+// buildRepos creates all repositories with the given DB handle.
+// Add new repositories here when extending the system.
+func (u *unitOfWork) buildRepos(db dbx.DBTX) (Repos, error) {
+	users, err := NewUserRepositoryWithDBTX(u.driver, db)
+	if err != nil {
+		return Repos{}, err
 	}
+	teams, err := NewTeamRepositoryWithDBTX(u.driver, db)
+	if err != nil {
+		return Repos{}, err
+	}
+	return Repos{Users: users, Teams: teams}, nil
 }
 
 func (u *unitOfWork) WithTransaction(ctx context.Context, fn func(ctx context.Context, r Repos) error) error {
@@ -139,6 +145,10 @@ func (t *transaction) Repos() Repos {
 
 func (t *transaction) Users() UserRepository {
 	return t.repos.Users
+}
+
+func (t *transaction) Teams() TeamRepository {
+	return t.repos.Teams
 }
 
 func (t *transaction) Commit() error {

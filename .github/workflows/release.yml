@@ -53,6 +53,18 @@ jobs:
           fi
 
       # -------------------------------
+      # Go tidy
+      # -------------------------------
+      - name: Install dependencies
+        run: go mod tidy
+
+      # -------------------------------
+      # Swagger CLI installation
+      # -------------------------------
+      - name: Install swagger CLI
+        run: go install github.com/swaggo/swag/cmd/swag@latest
+
+      # -------------------------------
       # Set swagger version
       # -------------------------------
       - name: Set SWAGGER_VERSION
